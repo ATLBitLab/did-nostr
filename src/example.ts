@@ -6,7 +6,7 @@ import {
   resolve
 } from './did-nostr.js';
 
-import { generatePrivateKey, getPublicKey } from 'nostr-tools';
+import { generatePrivateKey, getPublicKey, nip04 } from 'nostr-tools';
 
 function generateKeyPair(): { public: string, private: string } {
   const privateKey = generatePrivateKey();
@@ -26,6 +26,9 @@ const did = pubKeyToDid(kp.public);
 console.log(deriveDidDoc(did));
 
 const publishEvent = createPublishEvent(kp.public, rkp.public, kp.private, ['wss://relay.damus.io']);
+const nEvent = await nip04.encrypt(kp.private, kp.public, publishEvent);
+console.log('nEvent', nEvent);
+
 const recoverEvent = createRecoverEvent(
   did,
   rkp.public,
